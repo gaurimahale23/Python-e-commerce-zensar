@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>eCommerce Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      text-align: left;
+    }
+
+    .btn {
+      padding: 8px 12px;
+      margin-right: 10px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>eCommerce Management Dashboard</h1>
+
+  <div class="section">
+    <button class="btn" onclick="loadData('products')">Load Products</button>
+    <button class="btn" onclick="loadData('users')">Load Users</button>
+    <button class="btn" onclick="loadData('orders')">Load Orders</button>
+    <button class="btn" onclick="loadData('categories')">Load Categories</button>
+    <button class="btn" onclick="loadData('order-items')">Load Order Items</button>
+    <button class="btn" onclick="loadData('payments')">Load Payments</button>
+  </div>
+
+  <div id="data-output" class="section"></div>
+
+  <script>
+    function loadData(endpoint) {
+        fetch(`http://127.0.0.1:9090/${endpoint}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then(data => {
+          displayTable(data);
+        })
+        .catch(error => {
+          document.getElementById('data-output').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+        });
+    }
+
+    function displayTable(data) {
+      if (!Array.isArray(data) || data.length === 0) {
+        document.getElementById('data-output').innerHTML = "<p>No data found.</p>";
+        return;
+      }
+
+      let table = "<table><thead><tr>";
+      Object.keys(data[0]).forEach(key => {
+        table += `<th>${key}</th>`;
+      });
+      table += "</tr></thead><tbody>";
+
+      data.forEach(row => {
+        table += "<tr>";
+        Object.values(row).forEach(value => {
+          table += `<td>${value}</td>`;
+        });
+        table += "</tr>";
+      });
+
+      table += "</tbody></table>";
+      document.getElementById('data-output').innerHTML = table;
+    }
+  </script>
+
+</body>
+</html>
